@@ -1,7 +1,8 @@
 import numpy as np
-import signal_processing as sp
+import data_processing as sp
 from itertools import product
 from nptdms import TdmsFile
+
 
 def import_shot(fname, params):
     """
@@ -26,7 +27,6 @@ def import_shot(fname, params):
         else:
             shot[p] = tdms_file.object('p',p).data / g
     return shot
-
 
 
 def import_shot_ascii(fname, params, cols):
@@ -57,6 +57,7 @@ def import_shot_ascii(fname, params, cols):
 
 def downsample(shot, keys, n):
     """
+    Works in-place
     Used to down sample data by averaging over n data points
     
     Arguments:
@@ -67,11 +68,11 @@ def downsample(shot, keys, n):
     
     for key in keys:
         shot[key] = sp.linAve(shot[key],n)[n-1::n]
-    return shot
 
     
 def smooth(shot, keys, n, window = 'hanning'):
     """
+    Works in-place
     Smooths data according to a given windowed average
     
     Arguments:
@@ -83,11 +84,11 @@ def smooth(shot, keys, n, window = 'hanning'):
     
     for key in keys:
         shot[key] = sp.smooth(shot[key], window_len=n, window=window)
-    return shot
     
     
 def rise_fall(shot, params, thresh=0.05):
     """
+    Works in-place, must be called before inerp_shots
     Find the peak field of the shot and separatly return the rising and falling
     portions of the data. The data is truncated at thresh to prevent
     long tails
@@ -116,11 +117,10 @@ def rise_fall(shot, params, thresh=0.05):
     shot['Rxy_rising'] = shot['Vxy_rising']/shot['I_rising']
     shot['Rxy_falling'] = shot['Vxy_falling']/shot['I_falling']
     
-    return shot
-    
 
 def interp_shots(shots, params):
     """
+    Works in-place, call rise_fall before calling interp_shots
     This function interpolates all parameters to the B field of the shot with 
     the lowest peak field. B is interpolated last so that it cannot mess
     up the interpolation of other variables
@@ -172,9 +172,3 @@ def interp_shots(shots, params):
             
             shot['Rxy_rising'] = shot['Vxy_rising']/shot['I_rising']
             shot['Rxy_falling'] = shot['Vxy_falling']/shot['I_falling']
-    
-    return shots
-    
-
-    
-    
