@@ -1,13 +1,12 @@
 import numpy as np
 
 
-"""
+def reduceMat(A, Nave, axis=0):
+    """
     reduceMat
     This function takes a windowed average of the input
-    and returns the averaged 
-"""
-def reduceMat(A, Nave, axis=0):
-    
+    and returns the averaged
+    """
     
     shpA = np.shape(A) # Find the shape of the input array
 
@@ -46,10 +45,11 @@ def reduceMat(A, Nave, axis=0):
     return out
 	
 	
-	
 def gaussAve(data, n, sigma = None):
-	""" Returns data smoothed by a Gaussian window of size n """
-	""" n is the number points on each side of the original point to include"""
+	"""
+    Returns data smoothed by a Gaussian window of size n 
+	n is the number points on each side of the original point to include
+    """
 	
 	if n == 0:
 		dataAve = data
@@ -69,16 +69,24 @@ def gaussAve(data, n, sigma = None):
 	
 	
 def linAve(data, n):
-	""" Returns a linear average of the data over a window """
+	"""
+    Returns a windowed linear average of the data where the window is of
+    size n
+    """
+    
 	dataAve = np.convolve(data, np.ones((2*n+1,))/(2*n+1), mode='same')
 	return dataAve
 
 
-# window :  ['flat', 'hanning', 'hamming', 'bartlett', 'blackman']
-def smooth(x,window_len=11,window='hanning'):
+def smooth(x, window_len=11, window='hanning'):
+    """
+    Windowed smoothing of data with a choice of the type of window
+    window :  ['flat', 'hanning', 'hamming', 'bartlett', 'blackman']
+    """
     
     s=np.r_[x[window_len-1:0:-1],x,x[-2:-window_len-1:-1]]
     #print(len(s))
+    
     if window == 'flat': #moving average
         w=np.ones(window_len,'d')
     else:
@@ -88,13 +96,17 @@ def smooth(x,window_len=11,window='hanning'):
     return y
 
 
-# Returns the symmetric and asymmetric components of y about the given zero
-def symmetrize(x,y,zero=0):
+def symmetrize(x, y, zero=0):
+    """
+    Returns the symmetric and asymmetric components of y about the given zero 
+    """
+    
     idx = (np.abs(x-zero)).argmin()
     xsym = np.zeros(2*np.minimum(idx,len(x)-(idx+1))+1)
     symtemp = np.zeros(np.minimum(idx,len(x)-(idx+1)))
     asymtemp = np.zeros(np.minimum(idx,len(x)-(idx+1)))
     xsym[idx] = x[idx]
+    
     for i in range(len(symtemp)):
         xsym[idx+i+1] = x[idx+i+1]
         xsym[idx-i-1] = x[idx-i-1]

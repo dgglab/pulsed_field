@@ -23,9 +23,9 @@ def import_shot(fname, params):
     tdms_file = TdmsFile(fname)
     for p, g in params:
         if p == 'B':
-            shot[p] = tdms_file.object('p','Field_fixed').data / g
+            shot[p] = tdms_file.object('p', 'Field_fixed').data / g
         else:
-            shot[p] = tdms_file.object('p',p).data / g
+            shot[p] = tdms_file.object('p', p).data / g
     return shot
 
 
@@ -42,16 +42,16 @@ def import_shot_ascii(fname, params, cols):
     """
     
     with open(fname, 'r') as f:
-        data = np.genfromtxt(f,delimiter ='\t')
+        data = np.genfromtxt(f, delimiter='\t')
 
     shot = dict()
     shot['params'] = params
     shot['cols'] = cols
     for (p, g), c in zip(params, cols):
         if p == 'B' or p == 'Bdot':
-            shot[p] = data[~np.isnan(data[:,c]),c] / g
+            shot[p] = data[~np.isnan(data[:,c]), c] / g
         else:
-            shot[p] = data[:,c] / g
+            shot[p] = data[:, c] / g
     return shot
 
 
@@ -67,7 +67,7 @@ def downsample(shot, keys, n):
     """
     
     for key in keys:
-        shot[key] = sp.linAve(shot[key],n)[n-1::n]
+        shot[key] = sp.linAve(shot[key], n)[n-1::n]
 
     
 def smooth(shot, keys, n, window = 'hanning'):
@@ -104,12 +104,12 @@ def rise_fall(shot, params, thresh=0.05):
     index_max = np.argmax(np.abs(shot['B']))
     shot['index_max'] = index_max
     
-    threshind_rising = np.argmin(np.abs(shot['B'][:index_max]-thresh))
-    threshind_falling = np.argmin(np.abs(shot['B'][index_max:]-thresh))
+    threshind_rising = np.argmin(np.abs(shot['B'][:index_max] - thresh))
+    threshind_falling = np.argmin(np.abs(shot['B'][index_max:] - thresh))
     
     for p,_ in params:
         shot[p+'_rising'] = shot[p][threshind_rising:index_max]
-        shot[p+'_falling'] = shot[p][index_max:index_max+threshind_falling]
+        shot[p+'_falling'] = shot[p][index_max:index_max + threshind_falling]
     
     shot['Rxx_rising'] = shot['Vxx_rising']/shot['I_rising']
     shot['Rxx_falling'] = shot['Vxx_falling']/shot['I_falling']
@@ -137,7 +137,7 @@ def interp_shots(shots, params):
     
     minB_shot = np.argmin(B_max_store)
     
-    for (i,shot),(p,_) in product(enumerate(shots),params):
+    for (i,shot),(p,_) in product(enumerate(shots), params):
         if i == minB_shot:
             pass 
         else:
@@ -145,11 +145,11 @@ def interp_shots(shots, params):
                 pass
             else:
                 shot[p+'_rising'] = np.interp(
-                    np.abs(shots[minB_shot]['B_rising']),np.abs(shot['B_rising']),
+                    np.abs(shots[minB_shot]['B_rising']), np.abs(shot['B_rising']),
                     shot[p + '_rising'])
                     
                 shot[p+'_falling'] = np.interp(
-                    np.abs(shots[minB_shot]['B_falling']),np.abs(np.flip(shot['B_falling'])),
+                    np.abs(shots[minB_shot]['B_falling']), np.abs(np.flip(shot['B_falling'])),
                     np.flip(shot[p + '_falling']))
      
     
@@ -160,11 +160,11 @@ def interp_shots(shots, params):
             pass
         else:
             shot['B_rising'] = np.interp(
-                np.abs(shots[minB_shot]['B_rising']),np.abs(shot['B_rising']),
+                np.abs(shots[minB_shot]['B_rising']), np.abs(shot['B_rising']),
                 np.abs(shot['B_rising']))
                 
             shots[i]['B_falling'] = np.interp(
-                np.abs(shots[minB_shot]['B_falling']),np.abs(np.flip(shot['B_falling'])),
+                np.abs(shots[minB_shot]['B_falling']), np.abs(np.flip(shot['B_falling'])),
                 np.abs(np.flip(shot['B_falling'])))
                 
             shot['Rxx_rising'] = shot['Vxx_rising']/shot['I_rising']
