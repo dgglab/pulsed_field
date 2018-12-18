@@ -42,6 +42,7 @@ def reduceMat(A, Nave, axis=0):
             
     if listflag == 1:
         out = np.reshape(out,(-1))
+        
     return out
 	
 	
@@ -63,7 +64,6 @@ def gaussAve(data, n, sigma = None):
 		g = np.exp(-(x**2/(2*sigma**2)))
 		g = g/g.sum()
 		dataAve = np.convolve(data,g, mode='same')
-			
 		
 	return dataAve
 	
@@ -75,6 +75,7 @@ def linAve(data, n):
     """
     
 	dataAve = np.convolve(data, np.ones((2*n+1,))/(2*n+1), mode='same')
+    
 	return dataAve
 
 
@@ -93,6 +94,7 @@ def smooth(x, window_len=11, window='hanning'):
         w=eval('np.'+window+'(window_len)')
 
     y=np.convolve(w/w.sum(),s,mode='valid')
+    
     return y
 
 
@@ -117,4 +119,5 @@ def symmetrize(x, y, zero=0):
     sym = np.concatenate(args,axis=0)
     args = (-asymtemp[::-1],np.array([0]),asymtemp)
     asym = np.concatenate(args,axis=0)
+    
     return [xsym,sym,asym]
