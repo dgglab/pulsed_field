@@ -16,7 +16,6 @@ def import_shot(fname, params):
         params: list of tuples strings of variable names to import with their 
                 appropriate gains
     """
-        
     shot = dict()
     shot['params'] = params
         
@@ -40,7 +39,6 @@ def import_shot_ascii(fname, params, cols):
         params: list of tuples strings of variable names to import with their 
                 appropriate gains
     """
-    
     with open(fname, 'r') as f:
         data = np.genfromtxt(f, delimiter='\t')
 
@@ -65,7 +63,6 @@ def downsample(shot, keys, n):
         keys: dict keys of variables to down sample
         n: factor to down sample by
     """
-    
     for key in keys:
         shot[key] = sp.linAve(shot[key], n)[n-1::n]
 
@@ -81,7 +78,6 @@ def smooth(shot, keys, n, window = 'hanning'):
         n: size of windowed average
         window: type of window to use with smoothing
     """
-    
     for key in keys:
         shot[key] = sp.smooth(shot[key], window_len=n, window=window)
     
@@ -99,7 +95,6 @@ def rise_fall(shot, params, thresh=0.05):
                 appropriate gains
         thresh: cutoff B for truncating data
     """
-    
     shot['B_max'] = np.max(np.abs(shot['B']))
     index_max = np.argmax(np.abs(shot['B']))
     shot['index_max'] = index_max
@@ -130,7 +125,6 @@ def interp_shots(shots, params):
         params: list of tuples strings of variable names to import with their 
                 appropriate gains
     """
-    
     B_max_store = []
     for shot in shots:
         B_max_store.append(shot['B_max'])
